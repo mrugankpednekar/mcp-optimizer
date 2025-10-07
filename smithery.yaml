@@ -1,3 +1,9 @@
 version: 1
-type: docker
-dockerfile: docker/Dockerfile
+type: remote
+runtime: python
+pythonVersion: "3.12"
+installCommands:
+  - pip install --upgrade pip
+  - pip install .
+startCommand:
+  command: ["mcp", "http", "src/mcp_optimizer/server.py", "--host", "0.0.0.0", "--port", "3333", "--cors", "*"]
