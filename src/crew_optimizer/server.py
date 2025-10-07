@@ -45,4 +45,4 @@ def diagnose_infeasibility(model: LPModel) -> dict:
 
 
 if __name__ == "__main__":
-    app.run(transport="http", host="0.0.0.0", port=3333, cors="*")
+    app.run("http://0.0.0.0:3333")
