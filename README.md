@@ -1,97 +1,101 @@
-# MCP Optimizer
+# Crew Optimizer
 
-MCP Optimizer is an MCP server that exposes linear (LP) and mixed-integer (MILP) optimization tooling through the official MCP Python SDK. It ships a readable primal simplex implementation (with duals), a tiny branch-and-cut MILP solver with optional OR-Tools fallback, and helper utilities such as a natural-language LP parser, infeasibility diagnostics, examples, tests, Docker packaging, and CI.
+Crew Optimizer rebuilds the original optimisation project around the [CrewAI](https://github.com/joaomdmoura/crewai) ecosystem. It provides reusable CrewAI tools and agents capable of solving linear programs via SciPy's HiGHS backend, exploring mixed-integer models with a lightweight branch-and-bound search (or OR-Tools fallback), translating natural language prompts into LP JSON, and diagnosing infeasibility. You can embed the tools inside your own crews or call them programmatically through the `OptimizerCrew` convenience wrapper, or serve them over the MCP protocol for clients such as Smithery.
 
-## Quickstart
+## Installation
 
-```sh
-# if uv available (preferred)
-uv init mcp-optimizer && cd mcp-optimizer
-# (if this is already a plain folder, skip the init and just create files)
-
-# write all files above, then:
-uv add "mcp[cli]" numpy scipy pydantic
-uv add --dev pytest ruff black
-# optional MILP fallback:
-uv add --optional mip ortools
-
-# stdio dev (MCP Inspector)
-uv run mcp dev src/mcp_optimizer/server.py
-
-# streamable HTTP (for Smithery remote testing)
-uv run mcp http src/mcp_optimizer/server.py --port 3333 --cors "*"
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[mip]
 ```
 
-If `uv` is not available, the equivalent `pip` workflow is:
+This installs Crew Optimizer together with optional OR-Tools support for MILP solving. Add `pytest`, `ruff`, or other dev tools as needed (`pip install pytest`).
 
-```sh
-python -m venv .venv && source .venv/bin/activate
-pip install "mcp[cli]" numpy scipy pydantic pytest ruff black
+## Quick Usage
+
+```python
+from crew_optimizer import OptimizerCrew
+
+crew = OptimizerCrew(verbose=False)
+
+lp_model = {
+    "name": "diet-toy",
+    "sense": "min",
+    "objective": {
+        "terms": [
+            {"var": "x", "coef": 3},
+            {"var": "y", "coef": 2},
+        ],
+        "constant": 0,
+    },
+    "variables": [
+        {"name": "x", "lb": 0},
+        {"name": "y", "lb": 0},
+    ],
+    "constraints": [
+        {
+            "name": "c1",
+            "lhs": {
+                "terms": [
+                    {"var": "x", "coef": 1},
+                    {"var": "y", "coef": 2},
+                ],
+                "constant": 0,
+            },
+            "cmp": ">=",
+            "rhs": 8,
+        },
+        {
+            "name": "c2",
+            "lhs": {
+                "terms": [
+                    {"var": "x", "coef": 3},
+                    {"var": "y", "coef": 1},
+                ],
+                "constant": 0,
+            },
+            "cmp": ">=",
+            "rhs": 6,
+        },
+    ],
+}
+
+solution = crew.solve_lp(lp_model)
+print(solution)
 ```
 
-Install the package in editable mode (optional but handy):
+To integrate with a wider multi-agent workflow, call `crew.build_crew()` to obtain a `Crew` populated with the LP, MILP, and parser agents. Provide model inputs through CrewAI’s shared context as usual.
 
-```sh
-pip install -e .
+## MCP / Smithery Hosting
+
+Crew Optimizer ships an MCP server (`python -m crew_optimizer.server`) that wraps the same solvers. The repository already contains a Smithery manifest (`smithery.json`) and build config (`smithery.yaml`).
+
+1. Push the repository to GitHub.
+2. In Smithery, choose **Publish an MCP Server**, connect GitHub, and select the repo.
+3. Smithery installs the package (`pip install .`) and launches `mcp http src/crew_optimizer/server.py --port 3333` using the bundled startup script.
+4. The server exposes the following tools:
+   - `solve_linear_program`
+   - `solve_mixed_integer_program`
+   - `parse_natural_language`
+   - `diagnose_infeasibility`
+
+For local testing:
+
+```bash
+mcp http src/crew_optimizer/server.py --port 3333 --cors "*"
 ```
 
-## Local Development
+## Testing
 
-- `make fmt` – format with Black
-- `make lint` – Ruff lint
-- `make test` – run pytest test-suite (covers simplex optimality, duals, and MILP branch-and-cut)
-- `make dev-stdio` / `make dev-http` – run the MCP server via FastMCP over stdio or HTTP
-- `make bench` – quick benchmarking over the bundled toy instances
+Install test dependencies (`pip install pytest`) and run:
 
-The repo includes `scripts/generate_instances.py` to craft random feasible LPs for experimentation and `scripts/bench_lp.py` to profile solver iterations and timing.
-
-## Tools Exposed
-
-`src/mcp_optimizer/server.py` registers the following MCP tools:
-
-- `solve_lp(model, options?)` – primal simplex (Phase I/II, Bland pivot fallback, duals & reduced costs)
-- `solve_mip(model, use_or_tools=False, options?)` – depth-first branch-and-cut with bound tightening and optional OR-Tools CBC fallback
-- `parse_nl_to_lp(spec)` – small rule-based parser for toy natural language LP descriptions
-- `analyze_infeasibility(model)` – IIS-style diagnostic by constraint removal heuristics
-
-Schemas live in `src/mcp_optimizer/schemas.py` (Pydantic models). Example payloads are available under `examples/` and in `examples/call_tools.http`.
-
-## Running Examples
-
-```sh
-# stdio transport
-./examples/run_stdio.sh
-
-# HTTP transport (default port 3333)
-./examples/run_http.sh
-
-# Invoke from HTTP client
-http --json :3333/tools/solve_lp < examples/call_tools.http
+```bash
+python -m pytest
 ```
 
-## Docker & Compose
+The suite covers the LP solver, MILP branch-and-bound, and the NL parser.
 
-```sh
-docker build -t mcp-optimizer:latest -f docker/Dockerfile .
-docker run --rm -p 3333:3333 mcp-optimizer:latest
-```
+## Licence
 
-`docker/compose.yaml` mirrors the same configuration for local orchestration.
-
-## Continuous Integration
-
-`.github/workflows/ci.yml` runs Ruff, Black, pytest, and builds the Docker image on every push/PR to `main`.
-
-## Deployment via Smithery
-
-1. Ensure the GitHub repository is public and contains the bundled `smithery.json` manifest.
-2. From Smithery, choose **Publish an MCP Server** → **Continue with GitHub**, select the repository, and confirm the entry command `python -m mcp_optimizer.server`.
-3. Verify installation from the Smithery catalog, then connect from ChatGPT/Claude MCP clients over HTTP (port 3333) or stdio.
-
-## Benchmarks & Limitations
-
-The simplex solver targets readability over raw speed; it is appropriate for classroom-sized problems (tens of variables/constraints). Branch-and-cut is intentionally simple (no advanced cuts beyond bound tightening) and explores nodes depth-first with a soft limit; use the OR-Tools fallback for larger MILPs. Numerical stability is managed with tolerances but may require tuning (`SolveOptions.tol`) for ill-conditioned models.
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for full text.
+Distributed under the MIT Licence. See `LICENSE` for details.

@@ -9,7 +9,5 @@ installCommands:
   - chmod +x /usr/local/bin/startup.sh
   - cp .smithery/smithery /usr/local/bin/smithery
   - chmod +x /usr/local/bin/smithery
-  - cp .smithery/smithery /usr/bin/smithery || cp .smithery/smithery /bin/smithery
-  - chmod +x /usr/bin/smithery || true
 startCommand:
-  command: ["mcp", "http", "src/mcp_optimizer/server.py", "--host", "0.0.0.0", "--port", "3333", "--cors", "*"]
+  command: ["/usr/local/bin/startup.sh"]
