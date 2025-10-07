@@ -1,9 +1,17 @@
-version: 1
-type: remote
-runtime: python
-pythonVersion: "3.11"
-installCommands:
-  - pip install --upgrade pip
-  - pip install .
+runtime: container
+name: crew-optimizer
+displayName: Crew Optimizer MCP
+description: CrewAI-based LP simplex and MILP branch-and-bound tools exposed via MCP.
 startCommand:
-  command: ["/app/.venv/bin/python", "-m", "mcp_optimizer.server"]
+  type: "http"
+  commandFunction: |
+    (config) => ({
+      command: "python",
+      args: ["-m", "crew_optimizer.server"],
+      env: {}
+    })
+port: 3333
+configSchema:
+  type: object
+  properties: {}
+  additionalProperties: false

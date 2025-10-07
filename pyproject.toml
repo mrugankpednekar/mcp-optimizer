@@ -1,13 +1,19 @@
+[build-system]
+requires = ["setuptools>=67"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "mcp-optimizer"
+name = "crew-optimizer"
 version = "0.1.0"
-description = "MCP server exposing LP Simplex and MILP Branch-and-Cut solvers"
+description = "CrewAI agents and tools for LP simplex and MILP branch-and-bound solving"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Mrugank Pednekar" }]
 
 dependencies = [
   "mcp[cli]>=1.2.0",
+  "crewai>=0.201.1",
+  "crewai-tools>=0.75.0",
   "numpy>=1.26",
   "scipy>=1.13",
   "pydantic>=2.7",

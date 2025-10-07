@@ -1,8 +1,12 @@
+from __future__ import annotations
+
+from typing import Dict, List, Literal, Optional
+
 from pydantic import BaseModel, Field
-from typing import Literal, List, Dict, Optional
 
 Sense = Literal["min", "max"]
 Cmp = Literal["<=", ">=", "=="]
+PivotRule = Literal["dantzig", "bland"]
 
 
 class Variable(BaseModel):
@@ -36,11 +40,14 @@ class LPModel(BaseModel):
     variables: List[Variable]
     constraints: List[Constraint]
 
+    def variable_index(self) -> Dict[str, int]:
+        return {var.name: idx for idx, var in enumerate(self.variables)}
+
 
 class SolveOptions(BaseModel):
     max_iters: int = 10_000
     tol: float = 1e-9
-    pivot_rule: Literal["dantzig", "bland"] = "dantzig"
+    pivot_rule: PivotRule = "dantzig"
     return_duals: bool = True
 
 
@@ -50,5 +57,13 @@ class LPSolution(BaseModel):
     x: Dict[str, float] | None
     reduced_costs: Dict[str, float] | None
     duals: Dict[str, float] | None
+    iterations: int
+    message: str = ""
+
+
+class MIPSolution(BaseModel):
+    status: Literal["optimal", "infeasible", "unbounded", "iteration_limit"]
+    objective_value: Optional[float]
+    x: Dict[str, float] | None
     iterations: int
     message: str = ""

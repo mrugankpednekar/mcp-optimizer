@@ -1,8 +1,0 @@
-services:
-  mcp-optimizer:
-    build: .
-    ports:
-      - "3333:3333"
-    command: python -m mcp_optimizer.server
-    environment:
-      - PYTHONPATH=/app/src

@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+set -euo pipefail
+COMMAND="${1:-}"
+shift || true
+
+if [ "$COMMAND" = "start" ]; then
+  exec mcp http src/crew_optimizer/server.py --host 0.0.0.0 --port 3333 --cors "*" "$@"
+fi
+
+echo "Unsupported smithery command: $COMMAND" >&2
+exit 1

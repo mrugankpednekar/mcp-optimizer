@@ -1,0 +1,13 @@
+agents:
+  lp:
+    module: crew_optimizer.agents
+    factory: lp_agent
+    verbose: false
+  mip:
+    module: crew_optimizer.agents
+    factory: mip_agent
+    verbose: false
+  parser:
+    module: crew_optimizer.agents
+    factory: parser_agent
+    verbose: false
