@@ -1,13 +1,3 @@
 version: 1
-type: remote
-runtime: python
-pythonVersion: "3.11"
-installCommands:
-  - pip install --upgrade pip
-  - pip install .
-  - cp .smithery/startup.sh /usr/local/bin/startup.sh
-  - chmod +x /usr/local/bin/startup.sh
-  - cp .smithery/smithery /usr/local/bin/smithery
-  - chmod +x /usr/local/bin/smithery
-startCommand:
-  command: ["/app/.smithery/startup.sh"]
+type: docker
+dockerfile: docker/Dockerfile
