@@ -1,16 +1,13 @@
-runtime: container
-name: crew-optimizer
-displayName: Crew Optimizer MCP
-description: CrewAI-based LP simplex and MILP branch-and-bound tools exposed via MCP.
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
 startCommand:
   type: "http"
-  commandFunction: |
-    (config) => ({
-      command: "python",
-      args: ["-m", "crew_optimizer.server"],
-      env: {}
-    })
-port: 3333
+  command:
+    - "python"
+    - "-m"
+    - "crew_optimizer.server"
 configSchema:
   type: object
   properties: {}
