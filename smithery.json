@@ -2,7 +2,7 @@
   "name": "crew-optimizer",
   "description": "CrewAI-powered optimisation tools (LP simplex, MILP branch-and-bound) exposed over MCP",
   "entry": "python -m crew_optimizer.server",
-  "transports": ["stdio", "http"],
-  "http": { "port": 3333, "path": "/" },
+  "transports": ["stdio", "streamable-http"],
+  "streamable-http": { "port": 3333, "path": "/" },
   "tags": ["optimization", "LP", "MILP", "crewai", "simplex"]
 }
