@@ -1,0 +1,12 @@
+version: 1
+type: remote
+
+build:
+  language: python
+  python_version: "3.11"
+  install:
+    - pip install --upgrade pip
+    - pip install .
+
+start:
+  command: ["python", "-m", "mcp_optimizer.server"]
