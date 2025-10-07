@@ -7,5 +7,7 @@ installCommands:
   - pip install .
   - cp .smithery/startup.sh /usr/local/bin/startup.sh
   - chmod +x /usr/local/bin/startup.sh
+  - cp .smithery/smithery /usr/local/bin/smithery
+  - chmod +x /usr/local/bin/smithery
 startCommand:
   command: ["/app/.smithery/startup.sh"]
