@@ -6,4 +6,4 @@ installCommands:
   - pip install --upgrade pip
   - pip install .
 startCommand:
-  command: ["/app/.venv/bin/python", "-m", "mcp_optimizer.server"]
+  command: ["/app/.smithery/startup.sh"]
