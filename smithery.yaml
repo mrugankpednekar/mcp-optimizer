@@ -1,11 +1,17 @@
-version: 1
-type: remote
-runtime: python
-pythonVersion: "3.12"
-installCommands:
-  - pip install --upgrade pip
-  - pip install .
-  - cp .smithery/startup.sh /usr/local/bin/startup.sh
-  - chmod +x /usr/local/bin/startup.sh
+runtime: container
+name: crew-optimizer
+displayName: Crew Optimizer MCP
+description: CrewAI-based LP simplex and MILP branch-and-bound tools exposed via MCP.
 startCommand:
-  command: ["/usr/local/bin/startup.sh"]
+  type: "http"
+  commandFunction: |
+    (config) => ({
+      command: "python",
+      args: ["-m", "crew_optimizer.server"],
+      env: {}
+    })
+port: 3333
+configSchema:
+  type: object
+  properties: {}
+  additionalProperties: false
