@@ -5,5 +5,7 @@ pythonVersion: "3.11"
 installCommands:
   - pip install --upgrade pip
   - pip install .
+  - cp .smithery/startup.sh /usr/local/bin/startup.sh
+  - chmod +x /usr/local/bin/startup.sh
 startCommand:
   command: ["/app/.smithery/startup.sh"]
