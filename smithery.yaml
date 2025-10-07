@@ -5,9 +5,16 @@ pythonVersion: "3.12"
 installCommands:
   - pip install --upgrade pip
   - pip install .
-  - cp .smithery/startup.sh /usr/local/bin/startup.sh
-  - chmod +x /usr/local/bin/startup.sh
-  - cp .smithery/smithery /usr/local/bin/smithery
-  - chmod +x /usr/local/bin/smithery
 startCommand:
-  command: ["/usr/local/bin/startup.sh"]
+  command:
+    [
+      "mcp",
+      "http",
+      "src/crew_optimizer/server.py",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "3333",
+      "--cors",
+      "*",
+    ]
