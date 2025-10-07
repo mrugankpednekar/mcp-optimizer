@@ -45,4 +45,7 @@ def diagnose_infeasibility(model: LPModel) -> dict:
 
 
 if __name__ == "__main__":
-    app.run("http://0.0.0.0:3333")
+    app.settings.host = "0.0.0.0"
+    app.settings.port = 3333
+    app.settings.streamable_http_path = "/"
+    app.run(transport="streamable-http")
