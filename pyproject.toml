@@ -1,0 +1,26 @@
+[project]
+name = "mcp-optimizer"
+version = "0.1.0"
+description = "MCP server exposing LP Simplex and MILP Branch-and-Cut solvers"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Mrugank Pednekar" }]
+
+dependencies = [
+  "mcp[cli]>=1.2.0",
+  "numpy>=1.26",
+  "scipy>=1.13",
+  "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+mip = ["ortools>=9.10"]
+
+[tool.uv]
+dev-dependencies = ["pytest>=8", "ruff>=0.5", "black>=24.10"]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100

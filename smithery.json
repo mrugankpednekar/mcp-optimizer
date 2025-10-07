@@ -1,0 +1,8 @@
+{
+  "name": "mcp-optimizer",
+  "description": "MCP server exposing LP Simplex and MILP Branch-and-Cut tools",
+  "entry": "python -m mcp_optimizer.server",
+  "transports": ["stdio", "http"],
+  "http": { "port": 3333, "path": "/" },
+  "tags": ["optimization", "LP", "MILP", "simplex", "branch-and-cut"]
+}
