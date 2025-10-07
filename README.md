@@ -1,5 +1,7 @@
 # MCP Optimizer
 
+[![smithery badge](https://smithery.ai/badge/@mrugankpednekar/mcp-optimizer)](https://smithery.ai/server/@mrugankpednekar/mcp-optimizer)
+
 MCP Optimizer is an MCP server that exposes linear (LP) and mixed-integer (MILP) optimization tooling through the official MCP Python SDK. It ships a readable primal simplex implementation (with duals), a tiny branch-and-cut MILP solver with optional OR-Tools fallback, and helper utilities such as a natural-language LP parser, infeasibility diagnostics, examples, tests, Docker packaging, and CI.
 
 ## Quickstart
@@ -87,6 +89,14 @@ docker run --rm -p 3333:3333 mcp-optimizer:latest
 1. Ensure the GitHub repository is public and contains the bundled `smithery.json` manifest.
 2. From Smithery, choose **Publish an MCP Server** → **Continue with GitHub**, select the repository, and confirm the entry command `python -m mcp_optimizer.server`.
 3. Verify installation from the Smithery catalog, then connect from ChatGPT/Claude MCP clients over HTTP (port 3333) or stdio.
+
+## Installing via Smithery
+
+To install mcp-optimizer automatically via [Smithery](https://smithery.ai/server/@mrugankpednekar/mcp-optimizer):
+
+```bash
+npx -y @smithery/cli install @mrugankpednekar/mcp-optimizer
+```
 
 ## Benchmarks & Limitations
 
