@@ -53,10 +53,8 @@ if __name__ == "__main__":
     app.settings.port = port
     app.settings.streamable_http_path = "/mcp"
     app.settings.transport_security = TransportSecuritySettings(
-        allow_origins=["*"],
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["*"],
-        expose_headers=["mcp-session-id", "mcp-protocol-version"],
-        allow_credentials=True,
+        enable_dns_rebinding_protection=False,
+        allowed_hosts=["*"],
+        allowed_origins=["*"],
     )
     app.run(transport="streamable-http")
