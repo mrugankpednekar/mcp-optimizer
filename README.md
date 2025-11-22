@@ -79,6 +79,7 @@ Crew Optimizer ships an MCP server (`python -m crew_optimizer.server`) that wrap
    - `solve_mixed_integer_program`
    - `parse_natural_language`
    - `diagnose_infeasibility`
+   - `solve_word_problem_with_data` - Solve optimization problems using data from files
 
 For local testing:
 
@@ -95,6 +96,38 @@ python -m pytest
 ```
 
 The suite covers the LP solver, MILP branch-and-bound, and the NL parser.
+
+## Solving Word Problems with Data Files
+
+The MCP server includes a `solve_word_problem_with_data` tool that can parse data files (CSV, JSON, Excel) and use them to solve optimization word problems. This is particularly useful when you have data in files and want to formulate and solve optimization problems based on that data.
+
+### Example Usage
+
+```python
+# Example: Solve a production planning problem with data from a CSV file
+csv_data = """product,cost,capacity,demand
+Widget,10,100,50
+Gadget,15,80,60
+Thing,12,120,40"""
+
+problem = """
+Minimize total cost subject to:
+- Production of each product cannot exceed capacity
+- Production must meet demand
+- All production quantities are non-negative
+"""
+
+# The tool will parse the CSV, extract the cost, capacity, and demand values,
+# and formulate the optimization problem automatically.
+```
+
+The tool supports:
+- **CSV/TSV files**: Automatically detects and parses comma or tab-separated values
+- **JSON files**: Parses JSON arrays or objects
+- **Excel files**: Requires `pandas` and `openpyxl` (install with `pip install crew-optimizer[excel]`)
+- **Auto-detection**: Automatically detects file format if not specified
+
+The parsed data is incorporated into the problem description, allowing the natural language parser to extract values and formulate constraints and objective functions based on the actual data.
 
 ## Licence
 

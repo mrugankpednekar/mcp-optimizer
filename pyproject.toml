@@ -21,6 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 mip = ["ortools>=9.10"]
+excel = ["pandas>=2.0", "openpyxl>=3.0"]
 
 [tool.uv]
 dev-dependencies = ["pytest>=8", "ruff>=0.5", "black>=24.10"]
