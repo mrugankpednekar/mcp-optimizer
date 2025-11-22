@@ -1,5 +1,8 @@
 # Crew Optimizer
 
+[![smithery badge](https://smithery.ai/badge/@mrugankpednekar/mcp-optimizer)](https://smithery.ai/server/@mrugankpednekar/mcp-optimizer)
+
+MCP Optimizer is an MCP server that exposes linear (LP) and mixed-integer (MILP) optimization tooling through the official MCP Python SDK. It ships a readable primal simplex implementation (with duals), a tiny branch-and-cut MILP solver with optional OR-Tools fallback, and helper utilities such as a natural-language LP parser, infeasibility diagnostics, examples, tests, Docker packaging, and CI.
 Crew Optimizer rebuilds the original optimisation project around the [CrewAI](https://github.com/joaomdmoura/crewai) ecosystem. It provides reusable CrewAI tools and agents capable of solving linear programs via SciPy's HiGHS backend, exploring mixed-integer models with a lightweight branch-and-bound search (or OR-Tools fallback), translating natural language prompts into LP JSON, and diagnosing infeasibility. You can embed the tools inside your own crews or call them programmatically through the `OptimizerCrew` convenience wrapper, or serve them over the MCP protocol for clients such as Smithery.
 
 ## Installation
@@ -91,6 +94,23 @@ mcp http src/crew_optimizer/server.py --port 3333 --cors "*"
 
 Install test dependencies (`pip install pytest`) and run:
 
+`.github/workflows/ci.yml` runs Ruff, Black, pytest, and builds the Docker image on every push/PR to `main`.
+
+## Deployment via Smithery
+
+1. Ensure the GitHub repository is public and contains the bundled `smithery.json` manifest.
+2. From Smithery, choose **Publish an MCP Server** → **Continue with GitHub**, select the repository, and confirm the entry command `python -m mcp_optimizer.server`.
+3. Verify installation from the Smithery catalog, then connect from ChatGPT/Claude MCP clients over HTTP (port 3333) or stdio.
+
+## Installing via Smithery
+
+To install mcp-optimizer automatically via [Smithery](https://smithery.ai/server/@mrugankpednekar/mcp-optimizer):
+
+```bash
+npx -y @smithery/cli install @mrugankpednekar/mcp-optimizer
+```
+
+## Benchmarks & Limitations
 ```bash
 python -m pytest
 ```
