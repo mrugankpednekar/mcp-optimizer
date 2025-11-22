@@ -49,8 +49,6 @@ def parse_word_problem_with_data(
     # Enhance problem description with data
     enhanced_description = problem_description
     if parsed_data:
-        data_summary = format_data_summary(parsed_data)
-        
         # Try to extract and substitute data values directly into the problem description
         if isinstance(parsed_data.get("data"), list) and len(parsed_data["data"]) > 0:
             data_values = parsed_data["data"]
@@ -62,27 +60,24 @@ def parse_word_problem_with_data(
                 problem_description, data_values, columns
             )
         
-        # Add data context for reference
-        enhanced_description += f"""
-
-Data available:
-{data_summary}
-
-When formulating the optimization problem, use the actual values from the data above. 
-For example, if the data contains columns like 'cost', 'capacity', 'demand', etc., 
-reference them in your constraints and objective function using the column names and row values.
-"""
-
-        # Also inject data values directly into the description for better parsing
+        # Add data context AFTER the problem description, separated clearly
+        # The parser will stop at the first "subject to" section, so we can safely add data after
+        # the problem description without interfering with constraint parsing
+        data_summary = format_data_summary(parsed_data)
+        
+        # Add data values in a format that can be referenced but won't be parsed as constraints
         if isinstance(parsed_data.get("data"), list) and len(parsed_data["data"]) > 0:
             data_values = parsed_data["data"]
             columns = parsed_data.get("columns", [])
 
             # Create a data reference section with explicit values
-            data_ref = "\n\nData values (use these numeric values in your formulation):\n"
+            # Place it BEFORE the problem description so it's available for reference
+            # but the parser will only parse the actual problem description part
+            data_ref = "--- DATA REFERENCE ---\n"
+            data_ref += "Use these values in your formulation:\n"
             for i, row in enumerate(data_values[:20]):  # Limit to first 20 rows
                 if isinstance(row, dict):
-                    # Format as key=value pairs that can be parsed
+                    # Format as key=value pairs
                     row_parts = []
                     for k, v in row.items():
                         if isinstance(v, (int, float)):
@@ -91,8 +86,10 @@ reference them in your constraints and objective function using the column names
                             row_parts.append(f"{k}={v}")
                     row_str = ", ".join(row_parts)
                     data_ref += f"Row {i+1}: {row_str}\n"
-
-            enhanced_description += data_ref
+            
+            # Prepend data reference to the problem description
+            # The parser will start from "minimize" or "maximize" and stop at end of constraints
+            enhanced_description = data_ref + "\n" + enhanced_description
 
     # Parse the enhanced description
     return parse_nl_to_lp(enhanced_description)
