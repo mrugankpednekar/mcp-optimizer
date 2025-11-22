@@ -248,13 +248,23 @@ def solve_assignment_problem(
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", "8081"))
-    app.settings.host = "0.0.0.0"
-    app.settings.port = port
-    app.settings.streamable_http_path = "/mcp"
-    app.settings.transport_security = TransportSecuritySettings(
-        enable_dns_rebinding_protection=False,
-        allowed_hosts=["*"],
-        allowed_origins=["*"],
-    )
-    app.run(transport="streamable-http")
+    import sys
+    
+    # Check if we should use stdio (for Claude Desktop) or HTTP
+    transport = os.environ.get("MCP_TRANSPORT", "stdio")
+    
+    if transport == "stdio" or "--stdio" in sys.argv:
+        # Use stdio transport for Claude Desktop
+        app.run(transport="stdio")
+    else:
+        # Use HTTP transport for web-based clients
+        port = int(os.environ.get("PORT", "8081"))
+        app.settings.host = "0.0.0.0"
+        app.settings.port = port
+        app.settings.streamable_http_path = "/mcp"
+        app.settings.transport_security = TransportSecuritySettings(
+            enable_dns_rebinding_protection=False,
+            allowed_hosts=["*"],
+            allowed_origins=["*"],
+        )
+        app.run(transport="streamable-http")

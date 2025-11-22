@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "crew-optimizer": {
+      "command": "/Users/mrugankpednekar/Documents/Optimization/project/mcp-optimizer/.venv/bin/python",
+      "args": [
+        "-m",
+        "crew_optimizer.server"
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/mrugankpednekar/Documents/Optimization/project/mcp-optimizer/src"
+      }
+    }
+  }
+}
+
